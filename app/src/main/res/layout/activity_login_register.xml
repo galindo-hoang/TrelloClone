@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginRegisterActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/intro_background">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/intro_screen_title_text_size"
+        android:layout_marginTop="@dimen/intro_screen_title_text_marginTop"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_task_image"
+        android:layout_marginTop="@dimen/intro_screen_image_marginTop"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/let_s_get_started_text"
+        android:textSize="@dimen/lets_get_started_text_size"
+        android:layout_marginTop="@dimen/intro_screen_title_text_marginTop"
+        android:textColor="@color/primary_text_color" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_text_description"
+        android:layout_marginHorizontal="@dimen/intro_text_marginStartEnd"
+        android:textSize="@dimen/intro_text_size"
+        android:layout_marginTop="@dimen/intro_text_marginTop"/>
+
+    <Button
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:background="@drawable/button_solid_blue"
+        android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+        android:layout_marginHorizontal="@dimen/btn_marginStartEnd"
+        android:textSize="@dimen/btn_text_size"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up"
+        android:background="@drawable/button_blue_border_white_solid"
+        android:layout_marginTop="@dimen/intro_screen_sign_up_btn_marginTop"
+        android:layout_marginHorizontal="@dimen/btn_marginStartEnd"
+        android:textSize="@dimen/btn_text_size"
+        android:textColor="@color/colorPrimary"/>
+
+</LinearLayout>

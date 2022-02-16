@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -18,6 +19,7 @@ import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivityProfileBinding
 import com.example.trelloclone.firebase.FirestoreClass
 import com.example.trelloclone.models.User
+import com.google.firebase.storage.FirebaseStorage
 import java.io.IOException
 
 class ProfileActivity : BaseActivity() {
@@ -26,6 +28,7 @@ class ProfileActivity : BaseActivity() {
     }
     private lateinit var user: User
     private lateinit var loadImageFromCamera: androidx.activity.result.ActivityResultLauncher<Intent>
+    private var changeImage = false
     private lateinit var binding:ActivityProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +42,8 @@ class ProfileActivity : BaseActivity() {
         }
 
         binding.btnUpdate.setOnClickListener {
-            setupUpdateUser()
+            this.showProgressDialog("Waiting update...")
+            uploadImageToStorage()
         }
     }
 
@@ -50,7 +54,7 @@ class ProfileActivity : BaseActivity() {
                 Id = this.user.Id, Name = name, Email = this.user.Email,
                 Mobile = when{
                     binding.etMobile.text.toString().isEmpty() -> 0L
-                    else -> binding.etMobile.text.toString() as Long }
+                    else -> binding.etMobile.text.toString().toLong()}
                 , Image = this.user.Image, fcmToken = this.user.fcmToken
             )
             FirestoreClass().updateUser(this,data)
@@ -94,6 +98,7 @@ class ProfileActivity : BaseActivity() {
                 val data: Intent? = result.data
                 if(data!=null){
                     try{
+                        this.changeImage = true
                         this.user.Image = data.data.toString()
                         Glide
                             .with(this)
@@ -113,6 +118,25 @@ class ProfileActivity : BaseActivity() {
         }
     }
 
+    fun uploadImageToStorage(){
+        if(this.changeImage){
+            val sRef = FirebaseStorage.getInstance().reference.child("USER_IMAGE"+System.currentTimeMillis()+"."+getExternalFile(Uri.parse(this.user.Image)))
+            sRef.putFile(Uri.parse(this.user.Image)).addOnSuccessListener { taskSnapshot ->
+                Log.e("---aa",taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+                    this.user.Image = uri.toString()
+                    setupUpdateUser()
+                }
+            }
+        }else{
+            setupUpdateUser()
+        }
+    }
+
+
+    fun getExternalFile(uri:Uri):String{
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri))!!
+    }
 
 
     fun setupInfoUser(objects: User) {
@@ -130,6 +154,7 @@ class ProfileActivity : BaseActivity() {
     }
 
     fun setupUpdate() {
+        this.hideProgressDialog()
         setResult(Activity.RESULT_OK)
         finish()
     }

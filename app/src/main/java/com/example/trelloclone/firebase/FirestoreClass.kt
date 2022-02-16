@@ -24,12 +24,17 @@ class FirestoreClass {
             }
     }
 
-    fun SignInUser(activity: SignInActivity){
+    fun signInUser(activity: SignInActivity){
         mFireStore.collection(Constant.USERS)
             .document(getCurrentUserId())
             .get()
-            .addOnSuccessListener {
-                activity.userRegisterSuccess(it.toObject(User::class.java))
+            .addOnSuccessListener { document->
+                val mapValue = document.data!!
+                val objects = User(
+                    Id = mapValue[Constant.KEY_ID].toString(), Name = mapValue[Constant.KEY_NAME].toString(),
+                    Email = mapValue[Constant.KEY_EMAIL].toString(), Image = mapValue[Constant.KEY_IMAGE].toString(),
+                    Mobile = 0, fcmToken = mapValue[Constant.KEY_TOKEN].toString())
+                activity.userRegisterSuccess(objects)
             }
             .addOnCanceledListener {
                 Log.e(activity.javaClass.simpleName,"Error writing document")

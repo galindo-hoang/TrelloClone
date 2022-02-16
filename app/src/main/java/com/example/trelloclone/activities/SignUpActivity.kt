@@ -1,15 +1,14 @@
-package com.example.trelloclone
+package com.example.trelloclone.activities
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivitySignUpBinding
 import com.example.trelloclone.firebase.FirestoreClass
 import com.example.trelloclone.models.User
 import com.google.firebase.auth.FirebaseAuth
-import java.util.regex.Pattern
 
 class SignUpActivity : BaseActivity() {
     private fun setToolbar() {

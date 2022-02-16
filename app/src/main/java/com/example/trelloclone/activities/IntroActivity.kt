@@ -1,4 +1,4 @@
-package com.example.trelloclone
+package com.example.trelloclone.activities
 
 import android.content.Intent
 import android.graphics.Typeface
@@ -40,25 +40,7 @@ class IntroActivity : AppCompatActivity() {
             if(FirestoreClass().getCurrentUserId().isEmpty()){
                 startActivity(Intent(this, LoginRegisterActivity::class.java))
             }else{
-                FirebaseFirestore.getInstance()
-                    .collection(Constant.USERS)
-                    .document(FirestoreClass().getCurrentUserId())
-                    .get()
-                    .addOnSuccessListener { document ->
-                        val intent = Intent(this,MainActivity::class.java)
-                        val a = document.data
-                        intent.putExtra(Constant.OBJECT,User(
-                            Id = a?.get(Constant.KEY_ID).toString(), Name = a?.get(Constant.KEY_NAME).toString(),
-                            Email = a?.get(Constant.KEY_EMAIL).toString(), Image = a?.get(Constant.KEY_IMAGE).toString(),
-                            Mobile = a?.get(Constant.KEY_MOBILE) as Long, fcmToken = a[Constant.KEY_ID].toString()
-                            ))
-                        startActivity(intent)
-                        finish()
-                    }
-                    .addOnCanceledListener {
-                        Log.e("---","Error writing document")
-                        startActivity(Intent(this, LoginRegisterActivity::class.java))
-                    }
+                startActivity(Intent(this,MainActivity::class.java))
             }
         },3,TimeUnit.SECONDS)
 

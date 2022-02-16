@@ -1,15 +1,15 @@
-package com.example.trelloclone
+package com.example.trelloclone.activities
 
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivityBaseBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -51,7 +51,7 @@ open class BaseActivity : AppCompatActivity() {
             onBackPressed()
         }else{
             doubleClickToExit = true
-            Toast.makeText(this,R.string.please_click_back_again_to_exit,Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.please_click_back_again_to_exit,Toast.LENGTH_SHORT).show()
             Executors.newSingleThreadScheduledExecutor().schedule({
                 doubleClickToExit = false
             },2,TimeUnit.SECONDS)
@@ -60,7 +60,7 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showErrorSnackBar(meesage: String){
         val snackBar = Snackbar.make(findViewById(android.R.id.content),meesage,Snackbar.LENGTH_LONG)
-        snackBar.view.setBackgroundColor(ContextCompat.getColor(this,R.color.snackBar_error_color))
+        snackBar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.snackBar_error_color))
         snackBar.show()
     }
     override fun onCreate(savedInstanceState: Bundle?) {

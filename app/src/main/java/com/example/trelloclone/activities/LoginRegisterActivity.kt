@@ -1,10 +1,8 @@
-package com.example.trelloclone
+package com.example.trelloclone.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.example.trelloclone.databinding.ActivityLoginRegisterBinding
-import com.example.trelloclone.firebase.FirestoreClass
 
 class LoginRegisterActivity : BaseActivity() {
 

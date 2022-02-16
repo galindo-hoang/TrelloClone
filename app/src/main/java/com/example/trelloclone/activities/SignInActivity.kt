@@ -1,4 +1,4 @@
-package com.example.trelloclone
+package com.example.trelloclone.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivitySignInBinding
 import com.example.trelloclone.firebase.FirestoreClass
 import com.example.trelloclone.models.User
@@ -49,7 +50,7 @@ class SignInActivity : BaseActivity() {
             auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener { task ->
                 this.hideProgressDialog()
                 if(task.isSuccessful){
-                    FirestoreClass().signInUser(this)
+                    FirestoreClass().retrieveUser(this)
                 }else{
                     Toast.makeText(this,task.exception!!.message.toString(), Toast.LENGTH_SHORT).show()
                 }
@@ -79,7 +80,7 @@ class SignInActivity : BaseActivity() {
 
     fun userRegisterSuccess(toObject: User?) {
         Log.e("aaa",toObject.toString())
-        val intent = Intent(this,MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Constant.OBJECT,toObject)
         startActivity(intent)
         finish()

@@ -34,10 +34,14 @@ class FirestoreClass {
             .get()
             .addOnSuccessListener { document->
                 val mapValue = document.data!!
+//                val mobile = when(mapValue[Constant.KEY_MOBILE]){
+//                    "" -> 0L
+//                    else -> mapValue[Constant.KEY_MOBILE]
+//                }
                 val objects = User(
                     Id = mapValue[Constant.KEY_ID].toString(), Name = mapValue[Constant.KEY_NAME].toString(),
                     Email = mapValue[Constant.KEY_EMAIL].toString(), Image = mapValue[Constant.KEY_IMAGE].toString(),
-                    Mobile = 0, fcmToken = mapValue[Constant.KEY_TOKEN].toString())
+                    Mobile = mapValue[Constant.KEY_MOBILE].toString().toLong(), fcmToken = mapValue[Constant.KEY_TOKEN].toString())
                 when(activity){
                     is SignInActivity -> activity.userRegisterSuccess(objects)
                     is MainActivity -> activity.setupInfoUser(objects)
@@ -49,16 +53,10 @@ class FirestoreClass {
             }
     }
 
-    fun updateUser(activity: ProfileActivity, user: User){
-        val userInfo = hashMapOf<String,Any>(
-            Constant.KEY_NAME to user.Name,
-            Constant.KEY_EMAIL to user.Email,
-            Constant.KEY_IMAGE to user.Image,
-            Constant.KEY_MOBILE to user.Mobile
-        )
+    fun updateUser(activity: ProfileActivity, userHash: HashMap<String,Any>){
         mFireStore.collection(Constant.USERS)
             .document(getCurrentUserId())
-            .update(userInfo)
+            .update(userHash)
             .addOnSuccessListener {
                 activity.setupUpdate()
             }

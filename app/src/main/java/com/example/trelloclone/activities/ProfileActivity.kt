@@ -19,6 +19,7 @@ import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivityProfileBinding
 import com.example.trelloclone.firebase.FirestoreClass
 import com.example.trelloclone.models.User
+import com.example.trelloclone.utils.Constant
 import com.google.firebase.storage.FirebaseStorage
 import java.io.IOException
 
@@ -28,7 +29,8 @@ class ProfileActivity : BaseActivity() {
     }
     private lateinit var user: User
     private lateinit var loadImageFromCamera: androidx.activity.result.ActivityResultLauncher<Intent>
-    private var changeImage = false
+    private var haveChange = false
+    private var dataHash = hashMapOf<String,Any>()
     private lateinit var binding:ActivityProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +52,26 @@ class ProfileActivity : BaseActivity() {
     private fun setupUpdateUser() {
         val name = binding.etName.text.toString()
         if(name.isNotEmpty()){
-            val data = User(
-                Id = this.user.Id, Name = name, Email = this.user.Email,
-                Mobile = when{
-                    binding.etMobile.text.toString().isEmpty() -> 0L
-                    else -> binding.etMobile.text.toString().toLong()}
-                , Image = this.user.Image, fcmToken = this.user.fcmToken
-            )
-            FirestoreClass().updateUser(this,data)
+            val number = when(binding.etMobile.text.toString()){
+                "" -> 0
+                else -> binding.etMobile.text.toString().toLong()
+            }
+
+            if(name != user.Name){
+                haveChange = true
+                dataHash[Constant.KEY_NAME] = name
+            }
+
+            if(number != user.Mobile){
+                haveChange = true
+                dataHash[Constant.KEY_MOBILE] = number
+            }
+            if(haveChange){
+                FirestoreClass().updateUser(this,dataHash)
+            }
+        }else{
+            this.hideProgressDialog()
+            Toast.makeText(this,"Please fill name",Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -98,8 +112,7 @@ class ProfileActivity : BaseActivity() {
                 val data: Intent? = result.data
                 if(data!=null){
                     try{
-                        this.changeImage = true
-                        this.user.Image = data.data.toString()
+                        dataHash[Constant.KEY_IMAGE] = data.data.toString()
                         Glide
                             .with(this)
                             .load(data.data)
@@ -118,13 +131,15 @@ class ProfileActivity : BaseActivity() {
         }
     }
 
-    fun uploadImageToStorage(){
-        if(this.changeImage){
-            val sRef = FirebaseStorage.getInstance().reference.child("USER_IMAGE"+System.currentTimeMillis()+"."+getExternalFile(Uri.parse(this.user.Image)))
-            sRef.putFile(Uri.parse(this.user.Image)).addOnSuccessListener { taskSnapshot ->
+    private fun uploadImageToStorage(){
+        if(this.dataHash.containsKey(Constant.KEY_IMAGE)){
+            val sRef = FirebaseStorage.getInstance().reference.child("USER_IMAGE"+System.currentTimeMillis()+"."+getExternalFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString())))
+            sRef.putFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString())).addOnSuccessListener { taskSnapshot ->
                 Log.e("---aa",taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
-                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
-                    this.user.Image = uri.toString()
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
+                    Log.e("---a",this.dataHash[Constant.KEY_IMAGE].toString())
+                    this.dataHash[Constant.KEY_IMAGE] = url.toString()
+                    Log.e("---aa",this.dataHash[Constant.KEY_IMAGE].toString())
                     setupUpdateUser()
                 }
             }
@@ -134,7 +149,7 @@ class ProfileActivity : BaseActivity() {
     }
 
 
-    fun getExternalFile(uri:Uri):String{
+    private fun getExternalFile(uri:Uri):String{
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri))!!
     }
 

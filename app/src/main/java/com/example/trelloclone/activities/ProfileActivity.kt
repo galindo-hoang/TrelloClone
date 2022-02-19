@@ -24,11 +24,8 @@ import com.google.firebase.storage.FirebaseStorage
 import java.io.IOException
 
 class ProfileActivity : BaseActivity() {
-    companion object{
-        const val READ_PERMISSION_CODE = 1
-    }
     private lateinit var user: User
-    private lateinit var loadImageFromCamera: androidx.activity.result.ActivityResultLauncher<Intent>
+    private lateinit var loadImageFromGallery: androidx.activity.result.ActivityResultLauncher<Intent>
     private var haveChange = false
     private var dataHash = hashMapOf<String,Any>()
     private lateinit var binding:ActivityProfileBinding
@@ -38,7 +35,7 @@ class ProfileActivity : BaseActivity() {
         setContentView(binding.root)
         setToolbar()
         FirestoreClass().retrieveUser(this)
-        setupLoadImageFromCamera()
+        setupLoadImageFromGallery()
         binding.civProfile.setOnClickListener {
             setupLoadImage()
         }
@@ -77,17 +74,17 @@ class ProfileActivity : BaseActivity() {
 
     private fun setupLoadImage() {
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-            loadImageFromCamera.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+            loadImageFromGallery.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
         }else{
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),READ_PERMISSION_CODE)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),Constant.READ_PERMISSION_CODE)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == READ_PERMISSION_CODE ){
+        if(requestCode == Constant.READ_PERMISSION_CODE ){
             if(grantResults.isNotEmpty() &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                loadImageFromCamera.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+                loadImageFromGallery.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
             }else{
                 Toast.makeText(this,"you denied permission access gallery",Toast.LENGTH_SHORT).show()
             }
@@ -106,8 +103,8 @@ class ProfileActivity : BaseActivity() {
         }
     }
 
-    private fun setupLoadImageFromCamera(){
-        loadImageFromCamera = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+    private fun setupLoadImageFromGallery(){
+        loadImageFromGallery = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 if(data!=null){
@@ -133,24 +130,16 @@ class ProfileActivity : BaseActivity() {
 
     private fun uploadImageToStorage(){
         if(this.dataHash.containsKey(Constant.KEY_IMAGE)){
-            val sRef = FirebaseStorage.getInstance().reference.child("USER_IMAGE"+System.currentTimeMillis()+"."+getExternalFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString())))
+            val sRef = FirebaseStorage.getInstance().reference.child("USER_IMAGE"+System.currentTimeMillis()+"."+Constant.getExternalFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString()),this))
             sRef.putFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString())).addOnSuccessListener { taskSnapshot ->
-                Log.e("---aa",taskSnapshot.metadata!!.reference!!.downloadUrl.toString())
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
-                    Log.e("---a",this.dataHash[Constant.KEY_IMAGE].toString())
                     this.dataHash[Constant.KEY_IMAGE] = url.toString()
-                    Log.e("---aa",this.dataHash[Constant.KEY_IMAGE].toString())
                     setupUpdateUser()
                 }
             }
         }else{
             setupUpdateUser()
         }
-    }
-
-
-    private fun getExternalFile(uri:Uri):String{
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri))!!
     }
 
 

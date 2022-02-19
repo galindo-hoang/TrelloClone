@@ -7,8 +7,10 @@
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/button_blue_border_white_solid.xml" value="0.115" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/button_solid_blue.xml" value="0.1" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.291" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_vector_add_24dp.xml" value="0.223" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout-v23/activity_profile.xml" value="0.31431159420289856" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_base.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_create_board.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_intro.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_login_register.xml" value="0.18489583333333334" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_main.xml" value="0.25" />
@@ -17,9 +19,11 @@
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/app_bar_main.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/dialog_progress.xml" value="0.17806484295845998" />
-        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/main_content.xml" value="0.2563405797101449" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_board.xml" value="0.33" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/main_content.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/nav_header_main.xml" value="0.2717391304347826" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/menu/activity_menu_drawer.xml" value="0.25" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3345" />
       </map>
     </option>
   </component>

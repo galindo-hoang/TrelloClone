@@ -5,23 +5,25 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 
 object Constant {
-    val BOARD = "Board"
-    val USERS = "USers"
-    val OBJECT = "OBJECT_USER"
-    val KEY_ID = "id"
-    val KEY_NAME = "name"
-    val KEY_EMAIL = "email"
-    val KEY_IMAGE = "image"
-    val KEY_MOBILE = "mobile"
-    val KEY_TOKEN = "fcmToken"
+    const val DOCUMENT_BOARD = "Board"
+    const val DOCUMENT_USERS = "USers"
+    const val KEY_ID = "id"
+    const val KEY_NAME = "name"
+    const val KEY_EMAIL = "email"
+    const val KEY_IMAGE = "image"
+    const val KEY_MOBILE = "mobile"
+    const val KEY_TOKEN = "fcmToken"
 
-    val KEY_NAME_BOARD = "name"
-    val KEY_IMAGE_BOARD = "image"
-    val KEY_CREATEDBY = "createdBy"
-    val KEY_ASSIGNEDTO = "assignedTo"
-    var KEY_DOCUMENTID = "documentId"
+    const val KEY_NAME_BOARD = "name"
+    const val KEY_IMAGE_BOARD = "image"
+    const val KEY_CREATED_BY = "createdBy"
+    const val KEY_ASSIGNED_TO = "assignedTo"
+    const val KEY_DOCUMENT_ID = "documentId"
+    const val KEY_TASK_LIST = "taskList"
 
-    val OBJECT_USER = "OBJECT_USER"
+
+    const val OBJECT_USER = "OBJECT_USER"
+    const val OBJECT_BOARD = "OBJECT_BOARD"
 
     const val READ_PERMISSION_CODE = 1
 

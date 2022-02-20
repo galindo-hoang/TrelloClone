@@ -143,7 +143,7 @@ class ProfileActivity : BaseActivity() {
     }
 
 
-    fun setupInfoUser(objects: User) {
+    fun successRetrieveUser(objects: User) {
         user = objects
         binding.etName.setText(objects.Name)
         binding.etEmail.setText(objects.Email)

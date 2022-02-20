@@ -2,14 +2,21 @@ package com.example.trelloclone.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.firestore.PropertyName
 
 data class User(
-    val Id: String = "",
+    @set: PropertyName("id")
+    var Id: String = "",
+    @set: PropertyName("name")
     var Name: String = "",
-    val Email: String = "",
+    @set: PropertyName("email")
+    var Email: String = "",
+    @set: PropertyName("image")
     var Image: String = "",
+    @set: PropertyName("mobile")
     var Mobile: Long = 0,
-    val fcmToken: String = ""
+    @set: PropertyName("fcmToken")
+    var fcmToken: String = ""
 ):Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

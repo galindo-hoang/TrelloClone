@@ -14,7 +14,8 @@ class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
     fun createBoard(activity: CreateBoardActivity,boardInfo: Board){
-        mFireStore.collection(Constant.BOARD)
+        Log.e("---createBoard",boardInfo.toString())
+        mFireStore.collection(Constant.DOCUMENT_BOARD)
             .document()
             .set(boardInfo, SetOptions.merge())
             .addOnSuccessListener {
@@ -28,11 +29,10 @@ class FirestoreClass {
 //    fun fetchBoardByID()
 
     fun registerUser(activity: SignUpActivity, userInfo: User){
-        mFireStore.collection(Constant.USERS)
+        mFireStore.collection(Constant.DOCUMENT_USERS)
             .document(getCurrentUserId())
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
-                Log.e("---",getCurrentUserId())
                 activity.userRegisterSuccess()
             }
             .addOnCanceledListener {
@@ -41,20 +41,15 @@ class FirestoreClass {
     }
 
     fun retrieveUser(activity: Activity){
-
-        mFireStore.collection(Constant.USERS)
+        mFireStore.collection(Constant.DOCUMENT_USERS)
             .document(getCurrentUserId())
             .get()
             .addOnSuccessListener { document->
-                val mapValue = document.data!!
-                val objects = User(
-                    Id = mapValue[Constant.KEY_ID].toString(), Name = mapValue[Constant.KEY_NAME].toString(),
-                    Email = mapValue[Constant.KEY_EMAIL].toString(), Image = mapValue[Constant.KEY_IMAGE].toString(),
-                    Mobile = mapValue[Constant.KEY_MOBILE].toString().toLong(), fcmToken = mapValue[Constant.KEY_TOKEN].toString())
+                val user = document.toObject(User::class.java)
                 when(activity){
-                    is SignInActivity -> activity.userRegisterSuccess(objects)
-                    is MainActivity -> activity.setupInfoUser(objects)
-                    is ProfileActivity -> activity.setupInfoUser(objects)
+                    is SignInActivity -> activity.successLoginUser(user)
+                    is MainActivity -> activity.successRetrieveUser(user!!)
+                    is ProfileActivity -> activity.successRetrieveUser(user!!)
                 }
             }
             .addOnCanceledListener {
@@ -63,7 +58,7 @@ class FirestoreClass {
     }
 
     fun updateUser(activity: ProfileActivity, userHash: HashMap<String,Any>){
-        mFireStore.collection(Constant.USERS)
+        mFireStore.collection(Constant.DOCUMENT_USERS)
             .document(getCurrentUserId())
             .update(userHash)
             .addOnSuccessListener {
@@ -81,27 +76,62 @@ class FirestoreClass {
     }
 
     fun fetchBoardByID(activity: MainActivity) {
-        mFireStore.collection(Constant.BOARD)
-            .whereArrayContains(Constant.KEY_ASSIGNEDTO,this.getCurrentUserId())
+        mFireStore.collection(Constant.DOCUMENT_BOARD)
+            .whereArrayContains(Constant.KEY_ASSIGNED_TO,this.getCurrentUserId())
             .get()
-            .addOnSuccessListener { it ->
+            .addOnSuccessListener {
                 val list = ArrayList<Board>()
                 for (i in it.documents){
-                    val dataHash = i.data
-                    val assign = arrayListOf<String>()
-                    for(mem in (dataHash!![Constant.KEY_ASSIGNEDTO] as ArrayList<*>)) assign.add(mem.toString())
-                    val data = Board(
-                        Name = dataHash[Constant.KEY_NAME_BOARD].toString(),
-                        Image = dataHash[Constant.KEY_IMAGE_BOARD].toString(),
-                        CreatedBy = dataHash[Constant.KEY_CREATEDBY].toString(),
-                        DocumentId = i.id, AssignedTo = assign)
-                    list.add(data)
+                    val board = i.toObject(Board::class.java)!!
+                    board.DocumentId = i.id
+                    list.add(board)
                 }
                 activity.onSuccessFetchBoard(list)
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while creating a board.", e)
+                Log.e(activity.javaClass.simpleName, "Error while fetch boards.", e)
+            }
+    }
+
+    fun addListIntoBoard(activity: TaskListActivity, listHash: HashMap<String,Any>,boardID: String){
+        mFireStore.collection(Constant.DOCUMENT_BOARD)
+            .document(boardID)
+            .update(listHash)
+            .addOnSuccessListener {
+                activity.successAddListIntoBoard()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while add list in board.", e)
+            }
+    }
+
+    fun fetchListInBoard(activity: TaskListActivity, board: Board) {
+        mFireStore.collection(Constant.DOCUMENT_BOARD)
+            .document(board.DocumentId)
+            .get()
+            .addOnSuccessListener {
+                Log.e("---d",it.toObject(Board::class.java)!!.toString())
+                activity.successFetchListInBoard(it.toObject(Board::class.java)!!.taskList)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while fetch lists in board.", e)
+            }
+    }
+
+    fun editTitleListInBoard(activity: TaskListActivity, listHash: HashMap<String, Any>, documentId: String) {
+
+        mFireStore.collection(Constant.DOCUMENT_BOARD)
+            .document(documentId)
+            .update(listHash)
+            .addOnSuccessListener {
+                activity.successEditListInBoard()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while add list in board.", e)
             }
     }
 }

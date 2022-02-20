@@ -78,10 +78,9 @@ class SignInActivity : BaseActivity() {
         }
     }
 
-    fun userRegisterSuccess(toObject: User?) {
-        Log.e("aaa",toObject.toString())
+    fun successLoginUser(toObject: User?) {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(Constant.OBJECT,toObject)
+        intent.putExtra(Constant.OBJECT_USER,toObject)
         startActivity(intent)
         finish()
     }

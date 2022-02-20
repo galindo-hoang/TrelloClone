@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -55,15 +54,15 @@ class CreateBoardActivity : BaseActivity() {
             sRef.putFile(imageUri!!).addOnSuccessListener {
                 it.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
                     imageUrl = url.toString()
-                    doCreateboard()
+                    doCreateBoard()
                 }
             }
         }else{
-            doCreateboard()
+            doCreateBoard()
         }
     }
 
-    private fun doCreateboard() {
+    private fun doCreateBoard() {
         val name = binding.etBoardName.text.toString()
         if(name.isNotEmpty()){
             val board = Board(Name = name, Image = imageUrl, CreatedBy = this.user.Name, AssignedTo = arrayListOf(this.user.Id))

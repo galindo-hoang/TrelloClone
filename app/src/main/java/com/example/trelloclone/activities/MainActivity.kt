@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -34,7 +33,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setToolbar()
         binding.navView.setNavigationItemSelectedListener (this)
         setupLoadUserUpdate()
-        setupCreateBoard()
+        setupLoadBoard()
         FirestoreClass().retrieveUser(this)
         FirestoreClass().fetchBoardByID(this)
 
@@ -46,9 +45,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun setToolbar() {
-        setSupportActionBar(findViewById(R.id.tbAppBar))
-        findViewById<Toolbar>(R.id.tbAppBar).setNavigationIcon(R.drawable.ic_baseline_menu_24)
-        findViewById<Toolbar>(R.id.tbAppBar).setNavigationOnClickListener {
+        setSupportActionBar(binding.icMainActivity.tbAppBar)
+        binding.icMainActivity.tbAppBar.setNavigationIcon(R.drawable.ic_baseline_menu_24)
+        binding.icMainActivity.tbAppBar.setNavigationOnClickListener {
             binding.dl.openDrawer(GravityCompat.START)
         }
     }
@@ -70,7 +69,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    fun setupCreateBoard(){
+    private fun setupLoadBoard(){
         createBoard = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             if(result.resultCode == Activity.RESULT_OK){
                 FirestoreClass().fetchBoardByID(this@MainActivity)
@@ -79,7 +78,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-    fun setupInfoUser(user: User) {
+    fun successRetrieveUser(user: User) {
         this.user = user
         val navBinding = NavHeaderMainBinding.bind(binding.navView.getHeaderView(0))
         navBinding.tvNameNavigation.text = user.Name
@@ -114,7 +113,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     fun onSuccessFetchBoard(list: ArrayList<Board>) {
         if(list.isNotEmpty()){
             binding.icMainActivity.icAppBarMain.rcvBoardList.layoutManager = LinearLayoutManager(this)
-            binding.icMainActivity.icAppBarMain.rcvBoardList.adapter = BoardAdapter(list)
+            val adapter = BoardAdapter(list)
+            adapter.setOnClickListener(object :BoardAdapter.OnClickListener{
+                override fun onClick(position: Int, model: Board) {
+                    val intent = Intent(this@MainActivity,TaskListActivity::class.java)
+                    intent.putExtra(Constant.OBJECT_BOARD,model)
+                    intent.putExtra(Constant.OBJECT_USER,user)
+                    startActivity(intent)
+                }
+            })
+            binding.icMainActivity.icAppBarMain.rcvBoardList.adapter = adapter
             binding.icMainActivity.icAppBarMain.rcvBoardList.visibility = View.VISIBLE
             binding.icMainActivity.icAppBarMain.tvEmpty.visibility = View.INVISIBLE
         }else{

@@ -94,12 +94,12 @@ class FirestoreClass {
             }
     }
 
-    fun addListIntoBoard(activity: TaskListActivity, listHash: HashMap<String,Any>,boardID: String){
+    fun updateListInBoard(activity: TaskListActivity, listHash: HashMap<String,Any>, boardID: String){
         mFireStore.collection(Constant.DOCUMENT_BOARD)
             .document(boardID)
             .update(listHash)
             .addOnSuccessListener {
-                activity.successAddListIntoBoard()
+                activity.successUpdateListInBoard()
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()

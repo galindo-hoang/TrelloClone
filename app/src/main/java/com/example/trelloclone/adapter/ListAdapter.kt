@@ -6,17 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.trelloclone.activities.MainActivity
 import com.example.trelloclone.databinding.ItemTaskBinding
+import com.example.trelloclone.models.Card
 import com.example.trelloclone.models.Task
 
 class ListAdapter(
     private val list: ArrayList<Task>,
     private val addList:(EditText) -> Unit,
     private val editTitleList:(String,Int) -> Unit,
-    private val addTask:(EditText) -> Unit
+    private val addCard:(EditText,Int) -> Unit,
+    private val deleteList:(Int) -> Unit,
+    private val setupCard:(RecyclerView,ArrayList<Card>) -> Unit
 ): RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
     class ListViewHolder(itemView: ItemTaskBinding): RecyclerView.ViewHolder(itemView.root){
         var binding = itemView
@@ -39,6 +40,9 @@ class ListAdapter(
             holder.binding.tvAddList.visibility = View.GONE
             holder.binding.llTaskItem.visibility = View.VISIBLE
         }
+
+        setupCard.invoke(holder.binding.rcvCardList,data.cardList)
+
         holder.binding.tvTitleList.text = data.Title
 
         // Add List
@@ -93,7 +97,11 @@ class ListAdapter(
         }
 
         holder.binding.ibDoneAddCard.setOnClickListener {
-            addTask.invoke(holder.binding.etAddCardName)
+            addCard.invoke(holder.binding.etAddCardName,position)
+        }
+
+        holder.binding.ibDeleteList.setOnClickListener {
+            deleteList(position)
         }
 
     }

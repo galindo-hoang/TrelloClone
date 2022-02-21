@@ -134,6 +134,7 @@ class ProfileActivity : BaseActivity() {
             sRef.putFile(Uri.parse(this.dataHash[Constant.KEY_IMAGE].toString())).addOnSuccessListener { taskSnapshot ->
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { url ->
                     this.dataHash[Constant.KEY_IMAGE] = url.toString()
+                    this@ProfileActivity.haveChange = true
                     setupUpdateUser()
                 }
             }

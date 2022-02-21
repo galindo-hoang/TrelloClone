@@ -8,12 +8,14 @@ data class Task(
 //    @set: PropertyName("title")
     var Title: String = "",
 //    @set: PropertyName("createBy")
-    var createBy:String = ""
+    var createBy:String = "",
+    var cardList: ArrayList<Card> = arrayListOf()
 )
     : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.createTypedArrayList(Card.CREATOR)!!
     )
 
     override fun describeContents() = 0
@@ -21,6 +23,7 @@ data class Task(
     override fun writeToParcel(p0: Parcel?, p1: Int) = with(p0) {
         this!!.writeString(Title)
         this.writeString(createBy)
+        this.writeTypedList(cardList)
     }
 
     companion object CREATOR : Parcelable.Creator<Task> {

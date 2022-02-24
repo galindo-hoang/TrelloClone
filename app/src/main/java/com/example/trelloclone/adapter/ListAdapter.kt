@@ -17,7 +17,7 @@ class ListAdapter(
     private val editTitleList:(String,Int) -> Unit,
     private val addCard:(EditText,Int) -> Unit,
     private val deleteList:(Int) -> Unit,
-    private val setupCard:(RecyclerView,ArrayList<Card>) -> Unit
+    private val setupCard:(RecyclerView,ArrayList<Card>,Int) -> Unit
 ): RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
     class ListViewHolder(itemView: ItemTaskBinding): RecyclerView.ViewHolder(itemView.root){
         var binding = itemView
@@ -41,7 +41,7 @@ class ListAdapter(
             holder.binding.llTaskItem.visibility = View.VISIBLE
         }
 
-        setupCard.invoke(holder.binding.rcvCardList,data.cardList)
+        setupCard.invoke(holder.binding.rcvCardList,data.cardList,position)
 
         holder.binding.tvTitleList.text = data.Title
 

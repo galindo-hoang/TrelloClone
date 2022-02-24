@@ -2,6 +2,7 @@ package com.example.trelloclone.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.example.trelloclone.activities.*
 import com.example.trelloclone.models.Board
 import com.example.trelloclone.models.User
@@ -14,8 +15,7 @@ class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
     fun createBoard(activity: CreateBoardActivity,boardInfo: Board){
-        Log.e("---createBoard",boardInfo.toString())
-        mFireStore.collection(Constant.DOCUMENT_BOARD)
+        mFireStore.collection(Constant.COLLECTION_BOARD)
             .document()
             .set(boardInfo, SetOptions.merge())
             .addOnSuccessListener {
@@ -26,10 +26,8 @@ class FirestoreClass {
             }
     }
 
-//    fun fetchBoardByID()
-
     fun registerUser(activity: SignUpActivity, userInfo: User){
-        mFireStore.collection(Constant.DOCUMENT_USERS)
+        mFireStore.collection(Constant.COLLECTION_USERS)
             .document(getCurrentUserId())
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
@@ -41,7 +39,7 @@ class FirestoreClass {
     }
 
     fun retrieveUser(activity: Activity){
-        mFireStore.collection(Constant.DOCUMENT_USERS)
+        mFireStore.collection(Constant.COLLECTION_USERS)
             .document(getCurrentUserId())
             .get()
             .addOnSuccessListener { document->
@@ -58,7 +56,7 @@ class FirestoreClass {
     }
 
     fun updateUser(activity: ProfileActivity, userHash: HashMap<String,Any>){
-        mFireStore.collection(Constant.DOCUMENT_USERS)
+        mFireStore.collection(Constant.COLLECTION_USERS)
             .document(getCurrentUserId())
             .update(userHash)
             .addOnSuccessListener {
@@ -76,7 +74,7 @@ class FirestoreClass {
     }
 
     fun fetchBoardByID(activity: MainActivity) {
-        mFireStore.collection(Constant.DOCUMENT_BOARD)
+        mFireStore.collection(Constant.COLLECTION_BOARD)
             .whereArrayContains(Constant.KEY_ASSIGNED_TO,this.getCurrentUserId())
             .get()
             .addOnSuccessListener {
@@ -94,21 +92,27 @@ class FirestoreClass {
             }
     }
 
-    fun updateListInBoard(activity: TaskListActivity, listHash: HashMap<String,Any>, boardID: String){
-        mFireStore.collection(Constant.DOCUMENT_BOARD)
+    fun updateListInBoard(activity: Activity, listHash: HashMap<String,Any>, boardID: String){
+        mFireStore.collection(Constant.COLLECTION_BOARD)
             .document(boardID)
             .update(listHash)
             .addOnSuccessListener {
-                activity.successUpdateListInBoard()
+                when(activity){
+                    is TaskListActivity -> activity.successUpdateListInBoard()
+                    is CardDetailActivity -> activity.successUpdateNameOfCardInList()
+                }
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                when(activity){
+                    is TaskListActivity -> activity.hideProgressDialog()
+                    is CardDetailActivity -> activity.hideProgressDialog()
+                }
                 Log.e(activity.javaClass.simpleName, "Error while add list in board.", e)
             }
     }
 
     fun fetchListInBoard(activity: TaskListActivity, board: Board) {
-        mFireStore.collection(Constant.DOCUMENT_BOARD)
+        mFireStore.collection(Constant.COLLECTION_BOARD)
             .document(board.DocumentId)
             .get()
             .addOnSuccessListener {
@@ -123,7 +127,7 @@ class FirestoreClass {
 
     fun editTitleListInBoard(activity: TaskListActivity, listHash: HashMap<String, Any>, documentId: String) {
 
-        mFireStore.collection(Constant.DOCUMENT_BOARD)
+        mFireStore.collection(Constant.COLLECTION_BOARD)
             .document(documentId)
             .update(listHash)
             .addOnSuccessListener {
@@ -131,7 +135,71 @@ class FirestoreClass {
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error while add list in board.", e)
+                Log.e(activity.javaClass.simpleName, "Error while edit title of list in board.", e)
+            }
+    }
+
+    fun fetchUserByBoard(activity: MembersActivity, arrayMembers: ArrayList<String>) {
+        mFireStore.collection(Constant.COLLECTION_USERS)
+            .whereIn(Constant.KEY_ID,arrayMembers)
+            .get()
+            .addOnSuccessListener {
+                val usersList = ArrayList<User>()
+                for (i in it.documents) {
+                    // Convert all the document snapshot to the object using the data model class.
+                    val user = i.toObject(User::class.java)!!
+                    usersList.add(user)
+                }
+                activity.successFetchUserByBoard(usersList)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while fetch users in board.", e)
+            }
+    }
+
+    fun fetchUserByEmail(activity: MembersActivity, email: String) {
+        mFireStore.collection(Constant.COLLECTION_USERS)
+            .whereEqualTo(Constant.KEY_EMAIL,email)
+            .get()
+            .addOnSuccessListener {
+                if(it.documents.size > 0){
+                    activity.successFetchUserByEmail(it.documents[0].toObject(User::class.java))
+                }else{
+                    activity.hideProgressDialog()
+                    Toast.makeText(activity,"Email is not valid",Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while fetch users by email.", e)
+            }
+    }
+
+    fun updateMembersInBoard(activity: MembersActivity, userHash: HashMap<String, Any>, documentId: String) {
+        mFireStore.collection(Constant.COLLECTION_BOARD)
+            .document(documentId)
+            .update(userHash)
+            .addOnSuccessListener {
+                activity.successUpdateMembersInBoard()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while update members in board.", e)
+            }
+    }
+
+    fun fetchUserListInBoard(activity: MembersActivity, documentId: String) {
+        mFireStore.collection(Constant.COLLECTION_BOARD)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener {
+                val board = it.toObject(Board::class.java)
+                activity.successFetchUserListInBoard(board!!.AssignedTo)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while update members in board.", e)
             }
     }
 }

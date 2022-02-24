@@ -5,8 +5,8 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 
 object Constant {
-    const val DOCUMENT_BOARD = "Board"
-    const val DOCUMENT_USERS = "USers"
+    const val COLLECTION_BOARD = "Board"
+    const val COLLECTION_USERS = "USers"
     const val KEY_ID = "id"
     const val KEY_NAME = "name"
     const val KEY_EMAIL = "email"
@@ -24,6 +24,8 @@ object Constant {
 
     const val OBJECT_USER = "OBJECT_USER"
     const val OBJECT_BOARD = "OBJECT_BOARD"
+    const val POSITION_CARD = "POSITION_CARD"
+    const val POSITION_TASK = "POSITION_TASK"
 
     const val READ_PERMISSION_CODE = 1
 

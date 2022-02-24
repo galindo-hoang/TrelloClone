@@ -18,9 +18,23 @@ class CardAdapter(private val list: ArrayList<Card>):RecyclerView.Adapter<CardAd
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val model = list[position]
         holder.binding.tvName.text = model.name
+        holder.binding.cvCard.setOnClickListener {
+            if(onClickListener != null){
+                onClickListener!!.onClick(position,model)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    private var onClickListener: OnClickListener? = null
+
+    interface OnClickListener{
+        fun onClick(position: Int,model: Card)
+    }
+    fun setOnClickListener(onClickListener: OnClickListener){
+        this.onClickListener = onClickListener
     }
 }

@@ -1,11 +1,14 @@
 package com.example.trelloclone.activities
 
+import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +25,7 @@ class TaskListActivity : BaseActivity() {
     private lateinit var mBoard: Board
     private lateinit var mUser: User
     private lateinit var mTaskList: ArrayList<Task>
+    private lateinit var launchCardDetailActivity: androidx.activity.result.ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskListBinding.inflate(layoutInflater)
@@ -30,6 +34,32 @@ class TaskListActivity : BaseActivity() {
         mUser = intent.getParcelableExtra(Constant.OBJECT_USER)!!
         setToolbar()
         setupShowList()
+        setupLaunchCardDetailActivity()
+    }
+
+    private fun setupLaunchCardDetailActivity() {
+        this.launchCardDetailActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            if(it.resultCode == Activity.RESULT_OK){
+                this.setupShowList()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.view_members,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_members -> {
+                val intent = Intent(this,MembersActivity::class.java)
+                intent.putExtra(Constant.OBJECT_BOARD,mBoard)
+                startActivity(intent)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setToolbar() {
@@ -59,14 +89,27 @@ class TaskListActivity : BaseActivity() {
             { nameList, position -> editTitleList(nameList, position) },
             { editText,position -> addCard(editText,position) },
             { position -> deleteList(position)},
-            { recyclerViewCard, cardList -> setupRecyclerViewCard(recyclerViewCard,cardList)}
+            { recyclerViewCard, cardList, position -> setupRecyclerViewCard(recyclerViewCard,cardList, position)}
         )
         binding.rcvTaskList.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
     }
 
-    private fun setupRecyclerViewCard(recyclerViewCard: RecyclerView, cardList: ArrayList<Card>) {
+    private fun setupRecyclerViewCard(recyclerViewCard: RecyclerView, cardList: ArrayList<Card>, positionTask: Int) {
         recyclerViewCard.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
-        recyclerViewCard.adapter = CardAdapter(cardList)
+        val cardAdapter = CardAdapter(cardList)
+        cardAdapter.setOnClickListener(object: CardAdapter.OnClickListener{
+            override fun onClick(positionCard: Int, model: Card) {
+                val intent = Intent(this@TaskListActivity,CardDetailActivity::class.java)
+                intent.putExtra(Constant.POSITION_CARD,positionCard)
+                intent.putExtra(Constant.POSITION_TASK,positionTask)
+                mBoard.taskList = mTaskList
+                val cloneBoard = mBoard
+                cloneBoard.taskList.removeAt(mBoard.taskList.size - 1)
+                intent.putExtra(Constant.OBJECT_BOARD,cloneBoard)
+                launchCardDetailActivity.launch(intent)
+            }
+        })
+        recyclerViewCard.adapter = cardAdapter
     }
 
     private fun addList(editText: EditText){

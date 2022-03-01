@@ -2,8 +2,7 @@ package com.example.trelloclone.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,8 +10,10 @@ import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import com.example.trelloclone.R
 import com.example.trelloclone.databinding.ActivityCardDetailBinding
+import com.example.trelloclone.dialog.ColorDialog
 import com.example.trelloclone.firebase.FirestoreClass
 import com.example.trelloclone.models.Board
+import com.example.trelloclone.models.Card
 import com.example.trelloclone.utils.Constant
 
 class CardDetailActivity : BaseActivity() {
@@ -20,25 +21,46 @@ class CardDetailActivity : BaseActivity() {
     private var mPositionCard:Int = -1
     private var mPositionTask:Int = -1
     private var mBoard:Board? = null
+    private var mUpdateCard: Card? = null
+    private var mCloneCard: Card? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCardDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         mPositionCard = intent.getIntExtra(Constant.POSITION_CARD,-1)
         mPositionTask = intent.getIntExtra(Constant.POSITION_TASK,-1)
         mBoard = intent.getParcelableExtra(Constant.OBJECT_BOARD)
-
+        mBoard!!.taskList.removeAt(mBoard!!.taskList.size - 1)
+        mUpdateCard = mBoard!!.taskList[mPositionTask].cardList[mPositionCard]
+        mCloneCard = Card(createBy = mUpdateCard!!.createBy, assignedTo = mUpdateCard!!.assignedTo, selectedColor = mUpdateCard!!.selectedColor)
         setToolbar()
         setupVisualizationData()
+
+
         binding.btnUpdate.setOnClickListener {
             setupUpdate()
+        }
+        binding.tvSelectColor.setOnClickListener {
+            val dialog =object: ColorDialog(this,Constant.colorsList(),mBoard!!.taskList[mPositionTask].cardList[mPositionCard].selectedColor,"Select label color"){
+                override fun onItemSelected(color: String) {
+                    this@CardDetailActivity.binding.tvSelectColor.text = ""
+                    mCloneCard!!.selectedColor = color
+                    this@CardDetailActivity.binding.tvSelectColor.setBackgroundColor(Color.parseColor(color))
+                }
+            }
+            dialog.show()
         }
     }
 
     private fun setupVisualizationData() {
-        binding.etNameCard.setText(mBoard!!.taskList[mPositionTask].cardList[mPositionCard].name)
-        binding.etNameCard.setSelection(binding.etNameCard.text.toString().length)
+        binding.etNameCard.setText(mUpdateCard!!.name)
+        binding.etNameCard.setSelection(mUpdateCard!!.name.length)
+        if(mUpdateCard!!.selectedColor.isNotEmpty()){
+            binding.tvSelectColor.text = "";
+            binding.tvSelectColor.setBackgroundColor(Color.parseColor(mUpdateCard!!.selectedColor))
+        }
     }
 
     private fun setToolbar() {
@@ -47,7 +69,7 @@ class CardDetailActivity : BaseActivity() {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
         }
-        supportActionBar!!.title = mBoard!!.taskList[mPositionTask].cardList[mPositionCard].name
+        supportActionBar!!.title = mUpdateCard!!.name
         binding.tb.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -56,11 +78,19 @@ class CardDetailActivity : BaseActivity() {
     private fun setupUpdate() {
         val name = binding.etNameCard.text.toString().trim()
         if(name.isNotEmpty()){
-            if(name != mBoard!!.taskList[mPositionTask].cardList[mPositionCard].name){
-                this.showProgressDialog(resources.getString(R.string.please_wait))
-                mBoard!!.taskList[mPositionTask].cardList[mPositionCard].name = name
-                FirestoreClass().updateListInBoard(this, hashMapOf(Constant.KEY_TASK_LIST to mBoard!!.taskList), mBoard!!.DocumentId)
+            var mChange = false
+            this.showProgressDialog(resources.getString(R.string.please_wait))
+            if(mUpdateCard!!.name != name){
+                mUpdateCard!!.name = name
+                mChange = true
             }
+            if(mUpdateCard!!.selectedColor != mCloneCard!!.selectedColor){
+                mUpdateCard!!.selectedColor = mCloneCard!!.selectedColor
+                mChange = true
+            }
+            mBoard!!.taskList[mPositionTask].cardList[mPositionCard] = mUpdateCard!!
+            if(mChange) FirestoreClass().updateListInBoard(this, hashMapOf(Constant.KEY_TASK_LIST to mBoard!!.taskList), mBoard!!.DocumentId)
+            else finish()
         }else{
             Toast.makeText(this,"Please enter name",Toast.LENGTH_SHORT).show()
         }

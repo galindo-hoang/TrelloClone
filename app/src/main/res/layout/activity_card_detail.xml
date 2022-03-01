@@ -82,9 +82,9 @@
                     android:id="@+id/tvSelectColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="Select color"
                     android:layout_marginTop="@dimen/card_details_value_marginTop"
                     android:padding="@dimen/card_details_value_padding"
-                    android:text="Select color"
                     android:textColor="@color/primary_text_color" />
 
                 <TextView

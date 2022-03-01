@@ -103,9 +103,7 @@ class TaskListActivity : BaseActivity() {
                 intent.putExtra(Constant.POSITION_CARD,positionCard)
                 intent.putExtra(Constant.POSITION_TASK,positionTask)
                 mBoard.taskList = mTaskList
-                val cloneBoard = mBoard
-                cloneBoard.taskList.removeAt(mBoard.taskList.size - 1)
-                intent.putExtra(Constant.OBJECT_BOARD,cloneBoard)
+                intent.putExtra(Constant.OBJECT_BOARD,mBoard)
                 launchCardDetailActivity.launch(intent)
             }
         })

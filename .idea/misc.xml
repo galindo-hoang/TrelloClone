@@ -8,6 +8,8 @@
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/button_solid_blue.xml" value="0.1" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.291" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_baseline_cancel_24.xml" value="0.1165" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.2505" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_baseline_done_24.xml" value="0.2505" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/ic_vector_add_24dp.xml" value="0.223" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/drawable/shape_dialog_rounded.xml" value="0.2495" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout-v23/activity_profile.xml" value="0.31431159420289856" />
@@ -23,10 +25,12 @@
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/activity_task_list.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/app_bar_main.xml" value="0.25" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/color_dialog.xml" value="0.240625" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/dialog_progress.xml" value="0.17806484295845998" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/dialog_search_member.xml" value="0.24375" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_board.xml" value="0.33" />
-        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_card.xml" value="0.22" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_card.xml" value="0.5" />
+        <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_color.xml" value="0.33" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_member.xml" value="0.24375" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/item_task.xml" value="0.25" />
         <entry key="..\:/Users/huy/AndroidStudioProjects/TrelloClone/app/src/main/res/layout/main_content.xml" value="0.25" />

@@ -1,6 +1,9 @@
 package com.example.trelloclone.adapter
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trelloclone.databinding.ItemCardBinding
@@ -18,6 +21,10 @@ class CardAdapter(private val list: ArrayList<Card>):RecyclerView.Adapter<CardAd
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val model = list[position]
         holder.binding.tvName.text = model.name
+        if(model.selectedColor != ""){
+            holder.binding.vLabel.setBackgroundColor(Color.parseColor(model.selectedColor));
+            holder.binding.vLabel.visibility = View.VISIBLE;
+        }
         holder.binding.cvCard.setOnClickListener {
             if(onClickListener != null){
                 onClickListener!!.onClick(position,model)

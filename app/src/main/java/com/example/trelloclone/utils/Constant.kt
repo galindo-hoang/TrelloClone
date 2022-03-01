@@ -32,4 +32,18 @@ object Constant {
     fun getExternalFile(uri: Uri,activity: Activity):String{
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(activity.contentResolver.getType(uri))!!
     }
+
+    fun colorsList(): ArrayList<String> {
+
+        val colorsList: ArrayList<String> = ArrayList()
+        colorsList.add("#43C86F")
+        colorsList.add("#0C90F1")
+        colorsList.add("#F72400")
+        colorsList.add("#7A8089")
+        colorsList.add("#D57C1D")
+        colorsList.add("#770000")
+        colorsList.add("#0022F8")
+
+        return colorsList
+    }
 }
